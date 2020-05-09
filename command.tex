@@ -14,7 +14,9 @@
 			\item\ttt{Plot}
 			\item\ttt{Plot3D}
 			\item\ttt{ContourPlot}
+			\item\ttt{ContourPlot3D}
 			\item \ttt{ParametricPlot}
+			\item\ttt{ParametricPlot3D}
 			\item\ttt{StreamPlot}
 			\item\ttt{VectorPlot}
 			\item\ttt{Show}
@@ -276,7 +278,7 @@ ContourPlot[y - x^2, {x, -1, 1}, {y, -1, 1}]
 	Isso significa que temos um contorno da função $f$ cujo rótulo corresponde a 0. Ou seja, o valor nulo encontrado demonstra que a função $f$ ao longo de toda a curva $y-x^{2}$ está rotulado como 0 em três dimensões (Altura constante ao longo dessa parábola). Nesse caso, como estamos tratando de rótulos um atributo interessante de ser usado é o \ttt{ContourLabels}. Ele vai mapear a altura de cada parábola na representação em duas dimensões. Vejamos
 	
 \begin{lstlisting}[language=Mathematica]
-ContourPlot[y - x^2, {x, -1, 1}, {y, -1, 1}]
+ContourPlot[y-x^2,{x,-1,1},{y,-1,1},ContourLabels-> True,ContourShading->False]
 \end{lstlisting}
 
 	\begin{figure}[!h]
@@ -284,7 +286,249 @@ ContourPlot[y - x^2, {x, -1, 1}, {y, -1, 1}]
 		\includegraphics[scale=.47]{images/ContourLabels}
 	\end{figure}
 
-	Vemos o mapa de contornos referido. Para melhorar a visualização empregou-se o \ttt{ContourShading->False}
+	Vemos o mapa de contornos referido. Para melhorar a visualização empregou-se o \ttt{ContourShading->False}. Note que o \textit{label} 0. indica o contorno que foi discutida anteriormente. Para comprovarmos, usando o \ttt{ContourPlot}, vamos reforçar essa parábola com base na equação do contorno $y-x^{2}=k$, onde $k$ corresponde ao contorno 0.
+	
+\begin{lstlisting}[language=Mathematica]
+Show[ContourPlot[{y-x^2},{x,-1,1},{y,-1,1},ContourLabels->True,ContourShading->False,GridLines->Automatic],ContourPlot[
+y-x^2==0,{x,-1,1},{y,-1,1},ContourStyle->{Thick,Blue}]]
+\end{lstlisting}
+
+	\newpage
+	\begin{figure}[!h]
+		\centering
+		\includegraphics[scale=.47]{images/ContourZero}
+	\end{figure}
+
+	Repare que utilizou-se o \ttt{Show} para juntarmos os dois \ttt{ContourPlot}s. O primeiro representa os varias contornos \ttt{y-x\^\,\!2==k}, enquanto o segundo o contorno de rótulo nulo.
+	
+	Usando esse tópico de âncora vamos falar do \ttt{ContourPlot3D}. Imagina se quiséssemos representar esse contorno com $k=0$ no espaço. Com base no gráfico em 2d ao olhar de cima para baixo notamos que a parábola superior possui $k=0.5$ e vai diminuindo até $k=-1.5$. Isso demonstra que a superfície da parábola está diminuindo sua altura nesse intervalo com base na interpretação desses vários valores de $k$ (ou curvas de nível). Vejamos como fica em três dimensões
+	
+\begin{lstlisting}[language=Mathematica]
+superficie = ContourPlot3D[z==y-x^2,{x,-1,1},{y,-1,1},{z,-1.6,.6}, 
+ContourStyle->{Blue,Opacity[0.3]},BoundaryStyle->{Thick,Blue}]
+\end{lstlisting}
+
+	\begin{figure}[!h]
+		\centering
+		\includegraphics[scale=.3]{images/ContourPlot3d}
+	\end{figure}
+
+	O gráfico acima revela somente os vérios valores de $k$ que agora podem ser interpretados de forma mais qualitativa. Se mudarmos a vista, podemos fazer a comparação das projeções\\
+	
+	\begin{minipage}{.5\linewidth}
+		\includegraphics[scale=.25]{images/ContourLabels}
+	\end{minipage}
+	\begin{minipage}{.5\linewidth}
+		\includegraphics[scale=.25]{images/Top3dContours}
+	\end{minipage}
+
+	Um conceito importante está relacionado à ideia de que uma curva em duas dimensões, no espaço torna-se uma superfície. Tendo isso em mente, concluimos que a curva mais espessa identificada anteriormente para $k=0$ em duas dimensões, agora torna-se uma superfície que não depende de $z$. Vamos verificar
+	
+\begin{lstlisting}[language=Mathematica]
+superficie2 = ContourPlot3D[0==y-x^2,{x,-1,1},{y,-1,1},{z,-1.6,.6},ContourStyle->{Red,Opacity[0.3]},BoundaryStyle->{Thick,Red}]
+\end{lstlisting}
+
+\begin{minipage}{.5\linewidth}
+	\includegraphics[scale=.25]{images/ContourPlot3d}
+\end{minipage}
+\begin{minipage}{.5\linewidth}
+	\includegraphics[scale=.25]{images/ContourRed}
+\end{minipage}
+
+Juntando as duas
+
+\begin{lstlisting}[language=Mathematica]
+Show[superficie,superficie2]
+\end{lstlisting}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.24]{images/Juntos}
+\end{figure}
+
+Após fazer algumas mudanças, podemos ver com ainda mais clareza
+
+\begin{lstlisting}[language=Mathematica]
+superficie = ContourPlot3D[z==y-x^2,{x,-1,1},{y,-1,1},{z,-1.6,.6}, 
+ContourStyle->{Blue,Opacity[0.3]},BoundaryStyle->{Thick,Blue},
+Mesh->None,PlotPoints->100];
+
+superficie2 = ContourPlot3D[0==y-x^2,{x,-1,1},{y,-1,1},{z,-1.6,.6}, 
+ContourStyle->{Red,Opacity[0.3]},BoundaryStyle->{Thick,Red},
+Mesh->None];
+
+curve = ContourPlot3D[y-x^2==0,{x,-1,1},{y,-1,1},
+{z,-.00001,.00001},ContourStyle->{Red,Opacity[0.3]},
+BoundaryStyle->{Thickness[.01],Black},Mesh->None];
+
+Show[superficie, superficie2, curve]
+\end{lstlisting}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.5]{images/Together}
+\end{figure}
+
+\section{ParametricPlot}
+
+Esse comando é bastante empregado como uma alternativa ao \ttt{Plot} ou \ttt{ContourPlot}. Com ele podemos fazer representações semelhantes, porém de forma mais simplificada e igualmente entendível. O primeiro posição que passamos diz respeito a uma lista de parâmetros em $x$, $y$ e $z$, a depender se estamos tratando de duas ou três dimensões. 
+
+Um exemplo clássico de ser tratado nessa etapa diz respeito à parametrização de uma circunferência, que nos remete à ideia de duas dimensões. Nesse exemplo, vamos fazer uso das coordenadas polares como forma de descrever a curva no plano. Dessa forma, da geometria analítica sabemos que as variáveis $x$ e $y$ assumem 
+
+$$
+\begin{cases}
+	x=r\sin(t)\\
+	y=r\cos(t)
+\end{cases}
+$$
+
+Para a circunferência alvo de nosso estudo vamos imaginar que ela possui raio unitário, dessa forma teremos
+
+$$
+\begin{cases}
+	x=\sin(t)\\
+	y=\cos(t)
+\end{cases}
+$$
+
+Para adequarmos à sintaxe do \ttt{ParametricPlot} mostrada abaixo
+
+\begin{center}
+	\ttt{ParametricPlot[\{$\ttt{f}_{\ttt{x}}$,$\ttt{f}_{\ttt{y}}$\},\{$\ttt{t}$,$\ttt{t}_{\ttt{mín}}$,$\ttt{t}_{\ttt{máx}}$\}]}
+\end{center}
+
+Vamos imaginar que a função que descreve o traçado da circunferência depende do tempo (t), assim quando $t=0$ a curva não começou a ser traçada, mas quando $t=\pi$, metade dela já foi renderizada. Tendo esse pensamento em mente, chegamos que quando $t=2\pi$ a representação da circunferência está completa. Dessa forma, o \ttt{ParametricPlot} alcança a seguinte forma após assumirmos que $x$ e $y$ dependem de $t$
+
+\begin{lstlisting}[language=Mathematica]
+ParametricPlot[{Sin[t],Cos[t]},{t,0,2Pi}]
+\end{lstlisting}
+
+Podemos ler a linha acima como: ``Substitua $t$ no intervalo de 0 a $2\pi$ na função paramétrica de coordenadas $(\sin(t),\cos(t))$.''
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.5]{images/ParametricPlot}
+\end{figure}
+
+Repare que poderíamos assumir que $x=\cos(t)$ e $y=\sin(t)$ e isso só influenciaria no sentido da parametrização. Ou seja, ao invés de ser no sentido horário seria no anti-horário, mas o resultado final é o mesmo.
+
+Para o \ttt{ParametricPlot3D} temos somente o acréscimo de uma nova posição na função paramétrica. Dessa forma, mudamos de \ttt{\{$\ttt{f}_{\ttt{x}}$,$\ttt{f}_{\ttt{y}}$\}} para \ttt{\{$\ttt{f}_{\ttt{x}}$,$\ttt{f}_{\ttt{y}}$,$\ttt{f}_{\ttt{z}}$\}}. Vamos usar exemplo bastante análogo ao anterior, porém enquanto a circunferência é traçada em $x$ e $y$ vamos fazê-la ganhar altitude em $z$. Vejamos o exemplo
+
+\begin{lstlisting}[language=Mathematica]
+ParametricPlot3D[{Sin[t],Cos[t],t},{t,0,2Pi}]
+\end{lstlisting}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.5]{images/ParametricPlot3D}
+\end{figure}
+
+Mas o que houve nesse caso? Simples, ao adicionar o parâmetro t na na terceira posição da função paramétrica ocasionamos o deslocamento  dos pontos em $z$ como dito anteriormente. Dessa forma, vê-se que não só o ângulo $t$ vai de 0 a $2\pi$ nas funções $\sin$ e $\cos$, mas a altura do gráfico também. Isso ocasiona na cota 6 mostrada em $z$ (valor próximo dos 2$\pi\approx 6,\!28\ldots$) gerando a conformação de espiral mostrada. Como sabemos que $f_{x}$ e $f_{y}$ não foram modificadas se alterarmos a vista de \textit{Default} para \textit{Top}
+
+\newpage
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.5]{images/ParametricPlot3DTopView}
+\end{figure}
+
+veremos que a circunferência ainda existe na vista superior
+
+Vamos supor agora que queremos mostrar dois pontos. Um estará no início da curva em espiral -- quando $t=0$ -- e outra ao final ($t=2\pi$). A ideia é simples, basta substituirmos esses valores de $t$ na função paramétrica e vamos obter
+
+$$
+\begin{cases}
+	p_{1} = (\sin 0),\cos 0,0) \Rightarrow (0,1,0)\\
+	p_{2} = (\sin 2\pi,\cos 2\pi, 2\pi) \Rightarrow (0,1,2\pi)
+\end{cases}
+$$
+
+Para representarmos $p_{1}$ e $p_{2}$ graficamente vamos usar o comando \ttt{Graphics3D}. Como vamos plotar pontos usamos o comando \ttt{Point} dentro dele da seguinte forma 
+
+\begin{center}
+	\ttt{Graphics3D[Point[]]}
+\end{center}
+
+Para aumentarmos o tamanho dos pontos na representação aplicamos o \ttt{PointSize}
+
+\begin{center}
+	\ttt{Graphics3D[\{PointSize[Large],Point[]\}]}
+\end{center}
+
+Podemos escolher as cores também. Vamos de \ttt{Magenta} nesse caso
+
+\begin{center}
+	\ttt{Graphics3D[\{PointSize[Large],Red,Point[]\}]}
+\end{center}
+
+Agora, dentro do \ttt{Point} basta acrescentarmos uma lista de pontos com a estrutura
+
+\begin{center}
+	\ttt{\{p1,p2,\ldots,$\ttt{p}_{\ttt{n}}$\}}
+\end{center}
+
+No nosso caso \ttt{p1\,=\,\{0,1,0\}} e \ttt{p2\,=\,\{0,1,2\,Pi\}}, assim o \ttt{ParametricPlot3D} assumirá a forma
+
+\begin{center}
+	\ttt{
+		Graphics3D[\textcolor{purple}{\{}PointSize[Large],Point[\textcolor{red}{\{}\textcolor{blue}{\{0,1,0\},\{0,1,2\,Pi\}}\textcolor{red}{\}}]\textcolor{purple}{\}}]}
+\end{center}
+
+Escrevendo as seguintes linhas de código, obtemos
+
+\begin{lstlisting}[language=Mathematica]
+a = ParametricPlot3D[{Sin[t],Cos[t],t},{t,0,2Pi}]
+b = Graphics3D[{PointSize[Large],Red,Point[{{0,1,0},{0,1,2Pi}}]}]
+Show[a,b]
+\end{lstlisting}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.5]{images/ShowParametricPlot}
+\end{figure}
+
+Vamos acrescentar outro comando dentro do \ttt{Graphics} ainda não mostrado, o \ttt{Line}. A sintaxe é semelhante ao \ttt{Point}, nós passamos uma lista de pontos e a de forma automática é feita a interligação entre eles com base na ordem em que são escritos dentro da lista. Como só serão passados dois pontos (\ttt{p1} e \ttt{p2}), ao digitar
+
+\begin{lstlisting}[language=Mathematica]
+c = Graphics3D[{PointSize[Large],Red,Thick,Line[{{0,1,0},{0,1,2Pi}}]}]
+\end{lstlisting}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.3]{images/Line}
+\end{figure}
+
+Juntando \ttt{a}, \ttt{b} e \ttt{c} no \ttt{Show}
+
+\begin{lstlisting}[language=Mathematica]
+Show[a,b,c]
+\end{lstlisting}
+
+\begin{figure}[!h]
+	\centering
+	\includegraphics[scale=.5]{images/ShowNew}
+\end{figure}
+
+\newpage
+\subsection{Outro exemplo com o ParametricPlot3D}
+
+Vamos fazer um paraboloide análogo ao que foi feito com o \ttt{ContourPlot}. Basta estendermos a ideia do \ttt{ParametricPlot} para duas dimensões alterando a terceira posição da função ($f_{z}$). 
+
+Imagine que o paraboloide é uma série de círculos superpostos de modo que o raio e altura de cada um deles no empilhamento dependam de $r$ e $t$. Nesse caso, $t$ terá o mesmo papel visto anteriormente. Fará o ângulo interno variar de 0 a $2\pi$, enquanto $r$ elevará a altura de cada circunferência enquanto aumenta seu raio seguindo $r^{2}$ 
+
+Levando essa ideia para o \ttt{ParametricPlot3D}, podemos escrever
+
+$$
+\begin{cases}
+	x=r\sin t\\
+	y=r\cos t\\
+	z=r^{2}
+\end{cases}
+$$
+
+\begin{lstlisting}[language=Mathematica]
+ParametricPlot3D[{r Sin[t],r Cos[t],r^2},{t,0,2Pi},{r,0,4}]
+\end{lstlisting}
+
+Podemos interpretar a linha acima como: ``A partir da variação de \ttt{t}, renderize varias circunferências com o raio e altura variando segundo \ttt{r} (de 0 a 4 para o raio e de 0 a 16 para a altura)''
 \end{document}
 
 
